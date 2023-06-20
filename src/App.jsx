@@ -1,25 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-	MemoryRouter as Router,
-	Routes,
-	Route,
-	Link,
-	NavLink,
-} from 'react-router-dom';
-import reactLogo from './assets/react.svg';
-import { invoke } from '@tauri-apps/api/tauri';
+import { useEffect, useState } from 'react';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { getData } from './lib/onair';
 import { Leg } from './components/legs';
-import {
-	Card,
-	Container,
-	Loading,
-	Navbar,
-	Row,
-	Spacer,
-	Text,
-} from '@nextui-org/react';
-import { FaCog } from 'react-icons/fa';
+import { Card, Container, Loading, Row, Spacer } from '@nextui-org/react';
+import { Nav } from './layout/nav';
+import { Settings } from './screens/Settings';
 
 function MainScreen() {
 	const [query, setQuery] = useState('');
@@ -46,7 +31,7 @@ function MainScreen() {
 	};
 	return (
 		<Container justify='center' alignItems='center'>
-			{isLoading || true ? (
+			{isLoading ? (
 				<Row justify='center' alignItems='center'>
 					<Loading
 						size='xl'
@@ -58,9 +43,6 @@ function MainScreen() {
 					{jobs?.map((job) => (
 						<Card key={job} css={{ marginBlock: 32 }}>
 							<Card.Header>
-								<Link to='/test' style={{ color: 'black' }}>
-									Go to test
-								</Link>
 								{job.missionType} |{' '}
 								{job?.legs &&
 									`${job.legs[0].departureAirport}-${job.legs[0].arrivalAirport}`}
@@ -83,29 +65,10 @@ function MainScreen() {
 	);
 }
 
-const Settings = () => {
-	return (
-		<Container>
-			<Link to='/'>
-				<h1>Settings</h1>
-			</Link>
-		</Container>
-	);
-};
-
 export default function App() {
 	return (
 		<Router>
-			<Navbar isBordered variant={'sticky'}>
-				<Navbar.Brand>
-					<Text>OnAir Simbrief Tool</Text>
-				</Navbar.Brand>
-				<Navbar.Content>
-					<Navbar.Item as={NavLink} to='/settings'>
-						<FaCog />
-					</Navbar.Item>
-				</Navbar.Content>
-			</Navbar>
+			<Nav />
 			<Spacer y={2} />
 			<Routes>
 				<Route path='/' element={<MainScreen />} />
