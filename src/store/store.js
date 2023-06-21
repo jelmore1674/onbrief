@@ -1,10 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import tokenReducer from './slices/tokens';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
+import { jobReducer, tokenReducer } from './slices';
 
 const rootReducer = combineReducers({
 	tokens: tokenReducer,
+	jobs: jobReducer,
 });
 
 const persistConfig = {

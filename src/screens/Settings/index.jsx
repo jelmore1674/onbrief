@@ -3,15 +3,14 @@ import {
 	Container,
 	Grid,
 	Input,
+	Row,
 	Spacer,
 	Text,
 } from '@nextui-org/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateToken } from '../../store/slices/tokens';
 import { FaSave } from 'react-icons/fa';
-import { dataDir } from '@tauri-apps/api/path';
 import { writeTextFile, BaseDirectory, createDir } from '@tauri-apps/api/fs';
-// Write a text file to the `$APPCONFIG/app.conf` path
 
 export const Settings = () => {
 	const { apiKey, companyId, vaId } = useSelector((state) => state.tokens);
@@ -20,7 +19,6 @@ export const Settings = () => {
 	const saveData = async (keys) => {
 		let tries = 0;
 		try {
-			const dataDirPath = await dataDir();
 			await writeTextFile(
 				'onbrief/apiData.dat',
 				btoa(JSON.stringify(keys)),
@@ -29,27 +27,28 @@ export const Settings = () => {
 				}
 			);
 		} catch (e) {
+			// if the file doesn't exist try again.
 			if (e.includes('No such file or directory')) {
+				tries = tries++;
 				await createDir('onbrief', {
 					dir: BaseDirectory.Data,
 					recursive: true,
 				});
+				await saveData(keys);
 			}
-			tries = tries + 1;
 
 			if (tries === 5) {
 				console.log({ e });
 			}
-
-			await saveData(keys);
 		}
 	};
 
 	return (
 		<Container>
-			<Text>{apiKey}</Text>
-			<h1>Settings</h1>
-
+			<Row justify='center'>
+				<Text h1>Settings</Text>
+			</Row>
+			<Spacer y={2} />
 			<Grid.Container gap={4}>
 				<Grid>
 					<Input.Password
@@ -82,12 +81,14 @@ export const Settings = () => {
 						}
 					/>
 				</Grid>
+				<Grid xs={12}>
+					<Button
+						icon={<FaSave size={16} />}
+						onClick={() => saveData({ apiKey, companyId, vaId })}>
+						Save
+					</Button>
+				</Grid>
 			</Grid.Container>
-			<Button
-				icon={<FaSave size={16} />}
-				onClick={() => saveData({ apiKey, companyId, vaId })}>
-				Save
-			</Button>
 		</Container>
 	);
 };
