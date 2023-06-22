@@ -1,11 +1,20 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
-import { jobReducer, tokenReducer } from './slices';
+import {
+	aircraftDataReducer,
+	fleetReducer,
+	jobReducer,
+	toastReducer,
+	tokenReducer,
+} from './slices';
 
 const rootReducer = combineReducers({
 	tokens: tokenReducer,
 	jobs: jobReducer,
+	fleet: fleetReducer,
+	toast: toastReducer,
+	aircraftData: aircraftDataReducer,
 });
 
 const persistConfig = {

@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getJobData } from '../../lib/onair';
+import { getFleet, getJobData } from '../../lib/onair';
 
 export const fetchFleet = createAsyncThunk(
 	'fleet/fetch',
 	async (_, { rejectWithValue }) => {
 		try {
-			const response = await getJobData();
+			const response = await getFleet();
 			return response;
 		} catch (e) {
-			console.log({ e });
+			// TODO: add to log file
+			console.log({ fetchFleet: e });
 			return rejectWithValue('check api key');
 		}
 	}
@@ -16,11 +17,12 @@ export const fetchFleet = createAsyncThunk(
 
 const initialState = {
 	fleet: [],
+	aircraftData: [],
 	loading: false,
 	error: null,
 };
 
-const fleetlice = createSlice({
+const fleetSlice = createSlice({
 	name: 'fleet',
 	initialState,
 	reducers: {},
@@ -31,10 +33,16 @@ const fleetlice = createSlice({
 			fleet: payload,
 			loading: false,
 		}));
-		builder.addCase(fetchFleet.pending, (state, action) => ({
-			...state,
-			loading: true,
-		}));
+		builder.addCase(fetchFleet.pending, (state, action) => {
+			if (state.fleet.length) {
+				return state;
+			}
+
+			return {
+				...state,
+				loading: true,
+			};
+		});
 		builder.addCase(fetchFleet.rejected, (state, action) => {
 			if (action.payload) {
 				// Being that we passed in ValidationErrors to rejectType in `createAsyncThunk`, the payload will be available here.
@@ -46,4 +54,4 @@ const fleetlice = createSlice({
 	},
 });
 
-export default fleetlice.reducer;
+export default fleetSlice.reducer;

@@ -8,7 +8,8 @@ export const fetchJobs = createAsyncThunk(
 			const response = await getJobData();
 			return response;
 		} catch (e) {
-			console.log({ e });
+			// TODO: add to log file
+			console.log({ fetchJobs: e });
 			return rejectWithValue('check api key');
 		}
 	}
@@ -31,10 +32,15 @@ const jobSlice = createSlice({
 			jobs: payload,
 			loading: false,
 		}));
-		builder.addCase(fetchJobs.pending, (state, action) => ({
-			...state,
-			loading: true,
-		}));
+		builder.addCase(fetchJobs.pending, (state, action) => {
+			if (state.jobs.length) {
+				return state;
+			}
+			return {
+				...state,
+				loading: true,
+			};
+		});
 		builder.addCase(fetchJobs.rejected, (state, action) => {
 			if (action.payload) {
 				// Being that we passed in ValidationErrors to rejectType in `createAsyncThunk`, the payload will be available here.

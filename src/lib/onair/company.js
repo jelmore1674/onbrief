@@ -32,21 +32,44 @@ export async function getFleet() {
 		},
 	});
 
-	console.log({ data: data.Content[0] });
-
 	const fleet = data.Content.reduce((acc, aircraft) => {
 		const {
+			Id,
 			AircraftLease,
 			AircraftType,
 			CurrentAirport,
 			ConfigFirstSeats,
+			ConfigBusSeats,
+			ConfigEcoSeats,
+			CurrentSeats,
+			HoursBefore100HInspection,
+			TotalWeightCapacity,
+			Identifier,
 		} = aircraft;
-	});
 
-	return data.Content;
+		const aircraftConfig = {
+			id: Id,
+			leaseExpiration: AircraftLease?.EndDate,
+			aircraftType: AircraftType.DisplayName,
+			standardSeatWeight: AircraftType.StandardSeatWeight,
+			maximumCargoWeight: AircraftType.maximumCargoWeight,
+			maximumGrossWeight: AircraftType.maximumGrossWeight,
+			maxSeatCapacity: AircraftType.seats,
+			currentAirport: CurrentAirport?.ICAO,
+			currentSeats: CurrentSeats,
+			firstClassSeats: ConfigFirstSeats,
+			businessClassSeats: ConfigBusSeats,
+			economySeats: ConfigEcoSeats,
+			hoursBefore100HourInspection: HoursBefore100HInspection,
+			totalWeightCapacity: TotalWeightCapacity,
+			registration: Identifier,
+		};
+
+		return [...acc, aircraftConfig];
+	}, []);
+
+	return fleet;
 }
-
-getFleet();
 
 /**
  * Gets the jobs and sets the data in a way that I will use
@@ -94,10 +117,30 @@ export async function getJobData() {
 				baseAirport: job.BaseAirportId,
 			};
 
+			if (!legs) {
+				return acc;
+			}
+
 			return [...acc, fullJob];
 		}, []);
 
-		return jobs;
+		const sortedJobs = jobs.sort((a, b) => {
+			let dateA = new Date(a.expires);
+			let dateB = new Date(b.expires);
+			if (a.expires === undefined) {
+				dateA = new Date();
+			}
+			if (b.expires === undefined) {
+				dateB = new Date();
+			}
+			return dateA - dateB;
+		});
+
+		const levelJobs = sortedJobs.filter((job) => job.expires === undefined);
+		const pendingJobs = sortedJobs.filter(
+			(job) => job.expires !== undefined
+		);
+		return [...pendingJobs, ...levelJobs];
 	} catch (e) {
 		// TODO: Setup a log file
 		console.log({ getJobData: e });

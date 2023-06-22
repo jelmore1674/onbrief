@@ -3,21 +3,27 @@ import {
 	Container,
 	Grid,
 	Input,
+	Loading,
 	Row,
 	Spacer,
 	Text,
 } from '@nextui-org/react';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateToken } from '../../store/slices/tokens';
+import { BaseDirectory, createDir, writeTextFile } from '@tauri-apps/api/fs';
+import { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { writeTextFile, BaseDirectory, createDir } from '@tauri-apps/api/fs';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateToken } from '../../store/slices/tokens';
+import { updateToastMessage } from '../../store/slices/toast';
+import { showToast } from './utils';
 
 export const Settings = () => {
 	const { apiKey, companyId, vaId } = useSelector((state) => state.tokens);
+	const [loading, setLoading] = useState(false);
 	const dispatch = useDispatch();
 
 	const saveData = async (keys) => {
 		let tries = 0;
+		setLoading(true);
 		try {
 			await writeTextFile(
 				'onbrief/apiData.dat',
@@ -25,6 +31,11 @@ export const Settings = () => {
 				{
 					dir: BaseDirectory.Data,
 				}
+			);
+			showToast(
+				dispatch,
+				updateToastMessage,
+				'Successfully saved api keys'
 			);
 		} catch (e) {
 			// if the file doesn't exist try again.
@@ -40,6 +51,8 @@ export const Settings = () => {
 			if (tries === 5) {
 				console.log({ e });
 			}
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -82,11 +95,19 @@ export const Settings = () => {
 					/>
 				</Grid>
 				<Grid xs={12}>
-					<Button
-						icon={<FaSave size={16} />}
-						onClick={() => saveData({ apiKey, companyId, vaId })}>
-						Save
-					</Button>
+					{loading ? (
+						<Button disabled>
+							<Loading color='currentColor' />
+						</Button>
+					) : (
+						<Button
+							icon={<FaSave size={16} />}
+							onClick={() =>
+								saveData({ apiKey, companyId, vaId })
+							}>
+							Save
+						</Button>
+					)}
 				</Grid>
 			</Grid.Container>
 		</Container>
