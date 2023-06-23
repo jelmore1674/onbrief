@@ -15,9 +15,10 @@ import {
 	selectAircraft,
 	updateAircraftIcao,
 } from '../store/slices/aircraftData';
+import { IcaoModal } from './modal';
+import { openModal, closeModal } from '../store/slices/modal';
 
 export const Leg = ({ leg, acdata }) => {
-	const [showModal, setShowModal] = useState(false);
 	const [icao, setIcao] = useState('');
 	const [selectedIcao, setSelectedIcao] = useState('');
 	const [newIcao, setNewIcao] = useState('');
@@ -54,7 +55,7 @@ export const Leg = ({ leg, acdata }) => {
 			(plane) => plane === aircraft.aircraftType
 		);
 		if (!foundIcao) {
-			setShowModal(true);
+			dispatch(openModal());
 			setNewIcao(aircraft.aircraftType);
 		}
 
@@ -62,7 +63,7 @@ export const Leg = ({ leg, acdata }) => {
 
 		const data = {
 			maxpax: aircraft.maxSeatCapacity,
-			maxcargo: aircraft.maxCagoWeight / 1000,
+			maxcargo: aircraft.maximumCargoWeight / 1000,
 			paxwgt: 190,
 			bagwgt: 0,
 			reg: aircraft.registration,
@@ -74,14 +75,11 @@ export const Leg = ({ leg, acdata }) => {
 	const saveIcao = () => {
 		dispatch(updateAircraftIcao({ [newIcao]: icao }));
 		setSelectedIcao(icao);
-		setShowModal(false);
+		dispatch(closeModal());
 		setIcao('');
 		setNewIcao('');
 	};
 
-	console.log({ selectAircraft });
-
-	const closeModal = () => setShowModal(false);
 	return (
 		<Container css={{ marginBottom: 16 }}>
 			<Row justify='space-between' align='center' css={{ width: '100%' }}>
@@ -110,37 +108,19 @@ export const Leg = ({ leg, acdata }) => {
 						selectedAircraft.reg
 					}&type=${selectedIcao}&orig=${leg.departureAirport}&dest=${
 						leg.arrivalAirport
-					}&cargo=${leg.cargo / 1000}&pax=${
+					}&cargo=${(leg.cargo / 1000).toFixed(3)}&pax=${
 						leg.pax
 					}&acdata=${JSON.stringify(selectedAircraft)}`}
 					target='_blank'>
 					<img src='http://www.simbrief.com/previews/sblogo_small.png' />
 				</a>
 			</Row>
-			<Modal
-				blur
-				aria-labelledby='modal-title'
-				open={showModal}
-				onClose={closeModal}>
-				<Modal.Header>
-					<Text h2>Enter Plane ICAO</Text>
-				</Modal.Header>
-				<Modal.Body>
-					<Text h3>{newIcao}</Text>
-					<Spacer y={0.5} />
-					<Input
-						underlined
-						labelPlaceholder='Plane ICAO (ex. B738, A32N, B350)'
-						initialValue={icao}
-						onChange={(e) => setIcao(e.target.value)}
-					/>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button onPress={saveIcao}>
-						<Text>Save ICAO</Text>
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<IcaoModal
+				newIcao={newIcao}
+				icao={icao}
+				setIcao={setIcao}
+				saveIcao={saveIcao}
+			/>
 		</Container>
 	);
 };

@@ -5,6 +5,7 @@ import {
 	aircraftDataReducer,
 	fleetReducer,
 	jobReducer,
+	modalReducer,
 	toastReducer,
 	tokenReducer,
 } from './slices';
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
 	fleet: fleetReducer,
 	toast: toastReducer,
 	aircraftData: aircraftDataReducer,
+	modal: modalReducer,
 });
 
 const persistConfig = {

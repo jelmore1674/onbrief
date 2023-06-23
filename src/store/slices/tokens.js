@@ -4,6 +4,7 @@ const initialState = {
 	apiKey: '',
 	companyId: '',
 	vaId: '',
+	savedTokens: {},
 };
 
 export const tokenSlice = createSlice({

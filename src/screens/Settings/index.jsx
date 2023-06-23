@@ -45,7 +45,7 @@ export const Settings = () => {
 					dir: BaseDirectory.Data,
 					recursive: true,
 				});
-				await saveData(keys);
+				await saveData({ ...keys, savedTokens: keys });
 			}
 
 			if (tries === 5) {

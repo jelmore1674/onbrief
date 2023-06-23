@@ -14,7 +14,7 @@ async function getJobs() {
 	const { apiKey, companyId } = await getApiTokens();
 	const { data } = await companyApi.get(`/${companyId}/jobs/pending`, {
 		headers: {
-			'oa-apikey': apiKey.toString(),
+			'oa-apikey': apiKey,
 			'Access-Control-Allow-Origin': '*',
 			Accept: 'application/json',
 		},
@@ -81,7 +81,12 @@ export async function getJobData() {
 		const { Content } = await getJobs();
 
 		// filter the jobs and organize to usable data structure
-		const jobs = Content.reduce((acc, job) => {
+		const jobs = Content.reduce(async (acc, job) => {
+			const { companyId } = await getApiTokens();
+			if (job.CompanyId !== companyId) {
+				return acc;
+			}
+
 			const legs = job.Cargos.reduce((cargoAcc, cargo) => {
 				const pax = job.Charters.find(
 					(pax) =>

@@ -1,9 +1,21 @@
 import { Card, Grid, Text } from '@nextui-org/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from '../../../store/slices/modal';
 
-export const Aircraft = ({ aircraft }) => {
+export const Aircraft = ({ aircraft, setNewIcao, setIcao }) => {
+	const { aircraftIcao } = useSelector((state) => state.aircraftData);
+	const dispatch = useDispatch();
+	const handlePress = () => {
+		setNewIcao(aircraft.aircraftType);
+		const icao = aircraftIcao[aircraft.aircraftType];
+		if (icao) {
+			setIcao(icao);
+		}
+		dispatch(openModal());
+	};
 	return (
 		<Grid xs={6}>
-			<Card>
+			<Card isPressable onPress={handlePress}>
 				<Card.Header>
 					<Text h3>{aircraft.aircraftType}</Text>
 				</Card.Header>

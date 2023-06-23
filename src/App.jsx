@@ -3,12 +3,26 @@ import { Layout } from './layout/layout';
 import routes from './routes';
 import { Fleet, Jobs, Settings } from './screens';
 import { useEffect, useLayoutEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchJobs } from './store/slices/jobs';
 import { fetchFleet } from './store/slices/fleet';
+import { createAllDirectories } from './utils/createDirectories';
 
 export default function App() {
+	const { savedTokens } = useSelector((state) => state.tokens);
+	const { loading } = useSelector((state) => state.jobs);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		createAllDirectories();
+	}, []);
+
+	useEffect(() => {
+		if (!loading) {
+			dispatch(fetchJobs());
+			dispatch(fetchFleet());
+		}
+	}, [savedTokens]);
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {

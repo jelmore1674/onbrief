@@ -6,6 +6,8 @@ export const fetchFleet = createAsyncThunk(
 	async (_, { rejectWithValue }) => {
 		try {
 			const response = await getFleet();
+			console.log({ response });
+
 			return response;
 		} catch (e) {
 			// TODO: add to log file
