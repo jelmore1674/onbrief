@@ -40,7 +40,7 @@
 			]
 		},
 		"security": {
-			"csp": "default-src 'self' https://server1.onair.company"
+			"csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self' https://server1.onair.company"
 		},
 		"windows": [
 			{
