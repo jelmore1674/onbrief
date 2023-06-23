@@ -1,6 +1,7 @@
 import axios from 'axios';
 import axiosTauriAdapter from 'axios-tauri-adapter';
 import { getApiTokens } from './utils';
+import { writeLog } from '../../utils';
 
 // const apiKey = '1ab4a0f0-1071-46d7-9257-3b245657d520';
 // const companyId = '8c7ba836-4fa9-4a90-9a0a-39389486933d';
@@ -26,7 +27,7 @@ export async function getFleet() {
 	const { apiKey, companyId } = await getApiTokens();
 	const { data } = await companyApi.get(`/${companyId}/fleet`, {
 		headers: {
-			'oa-apikey': apiKey.toString(),
+			'oa-apikey': apiKey,
 			'Access-Control-Allow-Origin': '*',
 			Accept: 'application/json',
 		},
@@ -149,6 +150,7 @@ export async function getJobData() {
 	} catch (e) {
 		// TODO: Setup a log file
 		console.log({ getJobData: e });
+		writeLog(JSON.stringify({ getJobData: e.message }));
 		return [];
 	}
 }

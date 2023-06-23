@@ -15,7 +15,9 @@
 			"all": true,
 			"fs": {
 				"all": true,
-				"scope": ["$APPDATA/**", "$DATA/**"]
+				"scope": {
+					"allow": ["$APPDATA/**", "$DATA/**", "$APPLOG/**"]
+				}
 			},
 			"shell": {
 				"all": false,
