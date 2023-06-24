@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 export const IcaoModal = ({ icao, setIcao, newIcao, update, saveIcao }) => {
 	const { showModal } = useSelector((state) => state.modal);
+
 	const dispatch = useDispatch();
 	const handleClose = () => {
 		setIcao('');
@@ -12,6 +13,7 @@ export const IcaoModal = ({ icao, setIcao, newIcao, update, saveIcao }) => {
 	};
 	return (
 		<Modal
+			blur
 			aria-labelledby='modal-title'
 			open={showModal}
 			onClose={handleClose}>

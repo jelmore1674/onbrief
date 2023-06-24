@@ -18,10 +18,16 @@ import {
 import { IcaoModal } from './modal';
 import { openModal, closeModal } from '../store/slices/modal';
 
-export const Leg = ({ leg, acdata }) => {
-	const [icao, setIcao] = useState('');
-	const [selectedIcao, setSelectedIcao] = useState('');
-	const [newIcao, setNewIcao] = useState('');
+export const Leg = ({
+	leg,
+	acdata,
+	icao,
+	setIcao,
+	selectedIcao,
+	setSelectedIcao,
+	newIcao,
+	setNewIcao,
+}) => {
 	const { fleet } = useSelector((state) => state.fleet);
 	const { aircraftIcao, selectedAircraft } = useSelector(
 		(state) => state.aircraftData
@@ -55,8 +61,11 @@ export const Leg = ({ leg, acdata }) => {
 			(plane) => plane === aircraft.aircraftType
 		);
 		if (!foundIcao) {
-			dispatch(openModal());
+			console.log(typeof setNewIcao);
 			setNewIcao(aircraft.aircraftType);
+			if (newIcao !== '') {
+				dispatch(openModal());
+			}
 		}
 
 		setSelectedIcao(aircraftIcao[foundIcao]);
@@ -70,14 +79,6 @@ export const Leg = ({ leg, acdata }) => {
 		};
 
 		dispatch(selectAircraft(data));
-	};
-
-	const saveIcao = () => {
-		dispatch(updateAircraftIcao({ [newIcao]: icao }));
-		setSelectedIcao(icao);
-		dispatch(closeModal());
-		setIcao('');
-		setNewIcao('');
 	};
 
 	return (
@@ -115,12 +116,6 @@ export const Leg = ({ leg, acdata }) => {
 					<img src='http://www.simbrief.com/previews/sblogo_small.png' />
 				</a>
 			</Row>
-			<IcaoModal
-				newIcao={newIcao}
-				icao={icao}
-				setIcao={setIcao}
-				saveIcao={saveIcao}
-			/>
 		</Container>
 	);
 };

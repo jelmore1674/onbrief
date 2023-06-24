@@ -12,10 +12,17 @@ import { useEffect, useState } from 'react';
 import { Leg } from '../../components/legs';
 import { paginate } from './utils';
 import { FaCog } from 'react-icons/fa';
+import { IcaoModal } from '../../components/modal';
+import { updateAircraftIcao } from '../../store/slices/aircraftData';
+import { closeModal } from '../../store/slices/modal';
 
+// TODO: fix prop drilling
 export const Jobs = () => {
 	const { jobs, loading, error } = useSelector((state) => state.jobs);
 	const [page, setPage] = useState(1);
+	const [icao, setIcao] = useState('');
+	const [selectedIcao, setSelectedIcao] = useState('');
+	const [newIcao, setNewIcao] = useState('');
 	const dispatch = useDispatch();
 	const [paginatedJobs, setPaginatedJobs] = useState(null);
 
@@ -29,6 +36,14 @@ export const Jobs = () => {
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			setPage(selectedPage);
 		}, 800);
+	};
+
+	const saveIcao = () => {
+		dispatch(updateAircraftIcao({ [newIcao]: icao }));
+		setSelectedIcao(icao);
+		dispatch(closeModal());
+		setIcao('');
+		setNewIcao('');
 	};
 
 	if (jobs.length === 0 && !loading) {
@@ -80,9 +95,14 @@ export const Jobs = () => {
 									<Card.Body>
 										{job.legs.map((leg, i) => (
 											<Leg
+												newIcao={newIcao}
+												setNewIcao={setNewIcao}
 												leg={leg}
 												key={i}
-												acdata={acdata}
+												setSelectedIcao={
+													setSelectedIcao
+												}
+												selectedIcao={selectedIcao}
 											/>
 										))}
 									</Card.Body>
@@ -101,6 +121,16 @@ export const Jobs = () => {
 					)}
 				</>
 			)}
+			<IcaoModal
+				update
+				newIcao={newIcao}
+				setNewIcao={setNewIcao}
+				icao={icao}
+				setIcao={setIcao}
+				saveIcao={saveIcao}
+				setSelectedIcao={setSelectedIcao}
+				selectedIcao={selectedIcao}
+			/>
 		</Container>
 	);
 };
