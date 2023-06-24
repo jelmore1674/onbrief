@@ -1,17 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getFleet, getJobData } from '../../lib/onair';
+import { writeLog } from '../../utils';
 
 export const fetchFleet = createAsyncThunk(
 	'fleet/fetch',
 	async (_, { rejectWithValue }) => {
 		try {
 			const response = await getFleet();
-			console.log({ response });
-
 			return response;
 		} catch (e) {
-			// TODO: add to log file
-			console.log({ fetchFleet: e });
+			writeLog(JSON.stringify({ fetchFleet: e }));
 			return rejectWithValue('check api key');
 		}
 	}

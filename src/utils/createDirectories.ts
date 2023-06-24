@@ -19,6 +19,7 @@ export const FILES = {
 const LOG_DIVIDER = '-------------------------------';
 
 export async function writeLog(newLog: string) {
+	console.error(newLog);
 	const now = new Date().toUTCString();
 	const log = await readTextFile(FILES.APP_LOG, {
 		dir: BaseDirectory.AppLog,
@@ -62,6 +63,6 @@ export async function createAllDirectories() {
 			});
 		}
 	} catch (error) {
-		console.log({ createDir: error });
+		console.error({ createDir: error });
 	}
 }

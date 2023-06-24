@@ -3,9 +3,6 @@ import axiosTauriAdapter from 'axios-tauri-adapter';
 import { getApiTokens } from './utils';
 import { writeLog } from '../../utils';
 
-// const apiKey = '1ab4a0f0-1071-46d7-9257-3b245657d520';
-// const companyId = '8c7ba836-4fa9-4a90-9a0a-39389486933d';
-
 export const companyApi = axios.create({
 	adapter: axiosTauriAdapter,
 	baseURL: 'https://server1.onair.company/api/v1/company',
@@ -148,8 +145,6 @@ export async function getJobData() {
 		);
 		return [...pendingJobs, ...levelJobs];
 	} catch (e) {
-		// TODO: Setup a log file
-		console.log({ getJobData: e });
 		writeLog(JSON.stringify({ getJobData: e.message }));
 		return [];
 	}

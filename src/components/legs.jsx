@@ -61,7 +61,6 @@ export const Leg = ({
 			(plane) => plane === aircraft.aircraftType
 		);
 		if (!foundIcao) {
-			console.log(typeof setNewIcao);
 			setNewIcao(aircraft.aircraftType);
 			if (newIcao !== '') {
 				dispatch(openModal());

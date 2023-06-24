@@ -49,7 +49,7 @@ export const Settings = () => {
 			}
 
 			if (tries === 5) {
-				console.log({ e });
+				writeLog(JSON.stringify({ saveTokens: e }));
 			}
 		} finally {
 			setLoading(false);

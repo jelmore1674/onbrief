@@ -87,7 +87,7 @@ export const Jobs = () => {
 					{paginatedJobs?.map((job) => (
 						<>
 							{job.legs.length !== 0 && (
-								<Card key={job} css={{ marginBlock: 32 }}>
+								<Card key={job.id} css={{ marginBlock: 32 }}>
 									<Card.Header>
 										{job.missionType} |{' '}
 										{`${job.legs[0]?.departureAirport}-${job.legs[0]?.arrivalAirport}`}
