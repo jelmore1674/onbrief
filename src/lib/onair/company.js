@@ -80,10 +80,10 @@ export async function getJobData() {
 	try {
 		// Get the jobs form the OnAir api
 		const { Content } = await getJobs();
+		const { companyId } = await getApiTokens();
 
 		// filter the jobs and organize to usable data structure
-		const jobs = Content.reduce(async (acc, job) => {
-			const { companyId } = await getApiTokens();
+		const jobs = Content.reduce((acc, job) => {
 			if (job.CompanyId !== companyId) {
 				return acc;
 			}

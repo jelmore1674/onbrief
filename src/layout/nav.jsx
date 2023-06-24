@@ -3,9 +3,12 @@ import { FaCog } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 import { useHref } from 'react-router-dom';
 import routes from '../routes';
+import { useDispatch } from 'react-redux';
+import { fetchJobs } from '../store/slices/jobs';
 
 export function Nav() {
 	const currentRoute = useHref();
+	const dispatch = useDispatch();
 
 	const checkIfActiveRoute = (route) => {
 		return route === currentRoute;
@@ -20,6 +23,7 @@ export function Nav() {
 				<Navbar.Link
 					isActive={checkIfActiveRoute(routes.HOME)}
 					activeColor='primary'
+					onPress={() => dispatch(fetchJobs())}
 					as={NavLink}
 					to='/'
 					variant='underline'>
