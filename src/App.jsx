@@ -9,6 +9,8 @@ import { fetchFleet } from './store/slices/fleet';
 import { createAllDirectories } from './utils/createDirectories';
 import { BaseDirectory, downloadDir } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api';
+import { getApiTokens } from './lib/onair/utils';
+import { updateToken } from './store/slices/tokens';
 
 export default function App() {
 	const { savedTokens } = useSelector((state) => state.tokens);
@@ -17,6 +19,9 @@ export default function App() {
 
 	useEffect(() => {
 		createAllDirectories();
+		getApiTokens().then((tokens) => {
+			dispatch(updateToken({ ...tokens, savedTokens: tokens }));
+		});
 	}, []);
 
 	useEffect(() => {
