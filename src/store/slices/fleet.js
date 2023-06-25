@@ -4,9 +4,9 @@ import { writeLog } from '../../utils';
 
 export const fetchFleet = createAsyncThunk(
 	'fleet/fetch',
-	async (_, { rejectWithValue }) => {
+	async (tokens, { rejectWithValue }) => {
 		try {
-			const response = await getFleet();
+			const response = await getFleet(tokens);
 			return response;
 		} catch (e) {
 			writeLog(JSON.stringify({ fetchFleet: e }));

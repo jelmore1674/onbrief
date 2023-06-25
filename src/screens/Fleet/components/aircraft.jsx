@@ -15,7 +15,11 @@ export const Aircraft = ({ aircraft, setNewIcao, setIcao }) => {
 	};
 	return (
 		<Grid xs={6}>
-			<Card isPressable onPress={handlePress}>
+			<Card
+				borderWeight='bold'
+				isPressable
+				onPress={handlePress}
+				css={{ border: aircraft.vaAircraft && '1px solid $success' }}>
 				<Card.Header>
 					<Text h3>{aircraft.aircraftType}</Text>
 				</Card.Header>

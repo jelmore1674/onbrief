@@ -8,6 +8,7 @@ import {
 	modalReducer,
 	toastReducer,
 	tokenReducer,
+	worldReducer,
 } from './slices';
 
 const rootReducer = combineReducers({
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
 	toast: toastReducer,
 	aircraftData: aircraftDataReducer,
 	modal: modalReducer,
+	world: worldReducer,
 });
 
 const persistConfig = {

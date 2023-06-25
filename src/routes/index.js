@@ -5,4 +5,5 @@ export default {
 	HOME: '/',
 	FLEET: '/fleet',
 	SETTINGS: '/settings',
+	VA_JOBS: '/va-jobs',
 };

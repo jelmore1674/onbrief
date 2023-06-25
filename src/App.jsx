@@ -13,36 +13,38 @@ import { getApiTokens } from './lib/onair/utils';
 import { updateToken } from './store/slices/tokens';
 
 export default function App() {
-	const { savedTokens } = useSelector((state) => state.tokens);
+	const { world } = useSelector((state) => state.world);
+	const { savedTokens, ...tokens } = useSelector((state) => state.tokens);
 	const { loading } = useSelector((state) => state.jobs);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		createAllDirectories();
-		getApiTokens().then((tokens) => {
-			dispatch(updateToken({ ...tokens, savedTokens: tokens }));
-		});
+		// getApiTokens().then((tokens) => {
+		// 	dispatch(updateToken({ ...tokens, savedTokens: tokens }));
+		// });
 	}, []);
 
 	useEffect(() => {
 		if (!loading) {
-			dispatch(fetchJobs());
-			dispatch(fetchFleet());
+			dispatch(fetchJobs(tokens[world]));
+			dispatch(fetchFleet(tokens[world]));
 		}
-	}, [savedTokens]);
+	}, [savedTokens, world]);
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
-			dispatch(fetchJobs());
-			dispatch(fetchFleet());
-		}, 60000);
+			dispatch(fetchJobs(tokens[world]));
+			dispatch(fetchFleet(tokens[world]));
+		}, 10000);
 
 		return () => clearInterval(intervalId);
-	}, []);
+	}, [world]);
 	return (
 		<Router>
 			<Layout>
 				<Routes>
+					<Route path={routes.VA_JOBS} element={<Jobs />} />
 					<Route path={routes.HOME} element={<Jobs />} />
 					<Route path={routes.FLEET} element={<Fleet />} />
 					<Route path={routes.SETTINGS} element={<Settings />} />

@@ -15,20 +15,41 @@ import { FaCog } from 'react-icons/fa';
 import { IcaoModal } from '../../components/modal';
 import { updateAircraftIcao } from '../../store/slices/aircraftData';
 import { closeModal } from '../../store/slices/modal';
+import { useHref } from 'react-router-dom';
+import routes from '../../routes';
 
 // TODO: fix prop drilling
 export const Jobs = () => {
-	const { jobs, loading, error } = useSelector((state) => state.jobs);
+	const path = useHref();
+	const { jobs, vaJobs, loading, error } = useSelector((state) => state.jobs);
+	const { world } = useSelector((state) => state.world);
 	const [page, setPage] = useState(1);
 	const [icao, setIcao] = useState('');
 	const [selectedIcao, setSelectedIcao] = useState('');
 	const [newIcao, setNewIcao] = useState('');
 	const dispatch = useDispatch();
 	const [paginatedJobs, setPaginatedJobs] = useState(null);
+	const [worldChange, setWorldChange] = useState(false);
 
 	useEffect(() => {
-		setPaginatedJobs(paginate(jobs, 10, page));
-	}, [jobs, page]);
+		if (path === routes.HOME) {
+			setPaginatedJobs(paginate(jobs, 10, page));
+		}
+
+		if (path === routes.VA_JOBS) {
+			setPaginatedJobs(paginate(vaJobs, 10, page));
+		}
+
+		setWorldChange(false);
+	}, [jobs, vaJobs, page]);
+
+	useEffect(() => {
+		setWorldChange(true);
+		const newWorld = setTimeout(() => {
+			setWorldChange(false);
+		}, 2000);
+		return () => clearTimeout(newWorld);
+	}, [world]);
 
 	const handlePagination = async (selectedPage) => {
 		setPaginatedJobs(null);
@@ -46,7 +67,7 @@ export const Jobs = () => {
 		setNewIcao('');
 	};
 
-	if (jobs.length === 0 && !loading) {
+	if (path === routes.HOME && jobs.length === 0 && !loading) {
 		return (
 			<Container
 				justify='center'
@@ -64,12 +85,7 @@ export const Jobs = () => {
 			</Container>
 		);
 	}
-	const acdata = {
-		maxpax: 123,
-		maxcargo: 944883,
-		paxwgt: 190,
-		bagwgt: 0,
-	};
+
 	return (
 		<Container
 			justify='center'
@@ -87,7 +103,14 @@ export const Jobs = () => {
 					{paginatedJobs?.map((job) => (
 						<>
 							{job.legs.length !== 0 && (
-								<Card key={job.id} css={{ marginBlock: 32 }}>
+								<Card
+									key={job.id}
+									css={{
+										marginBlock: 32,
+										border:
+											path === routes.VA_JOBS &&
+											'1px solid $success',
+									}}>
 									<Card.Header>
 										{job.missionType} |{' '}
 										{`${job.legs[0]?.departureAirport}-${job.legs[0]?.arrivalAirport}`}
@@ -110,7 +133,7 @@ export const Jobs = () => {
 							)}
 						</>
 					))}
-					{jobs.length > 0 && (
+					{jobs.length > 9 && (
 						<Row justify='center'>
 							<Pagination
 								initialPage={page}

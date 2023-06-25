@@ -8,8 +8,7 @@ export const companyApi = axios.create({
 	baseURL: 'https://server1.onair.company/api/v1/company',
 });
 
-async function getJobs() {
-	const { apiKey, companyId } = await getApiTokens();
+async function getJobs({ apiKey, companyId }) {
 	const { data } = await companyApi.get(`/${companyId}/jobs/pending`, {
 		headers: {
 			'oa-apikey': apiKey,
@@ -20,8 +19,7 @@ async function getJobs() {
 	return data;
 }
 
-export async function getFleet() {
-	const { apiKey, companyId } = await getApiTokens();
+export async function getFleet({ apiKey, companyId }) {
 	const { data } = await companyApi.get(`/${companyId}/fleet`, {
 		headers: {
 			'oa-apikey': apiKey,
@@ -39,6 +37,7 @@ export async function getFleet() {
 			ConfigFirstSeats,
 			ConfigBusSeats,
 			ConfigEcoSeats,
+			CurrentCompanyId,
 			CurrentSeats,
 			HoursBefore100HInspection,
 			TotalWeightCapacity,
@@ -61,6 +60,7 @@ export async function getFleet() {
 			hoursBefore100HourInspection: HoursBefore100HInspection,
 			totalWeightCapacity: TotalWeightCapacity,
 			registration: Identifier,
+			vaAircraft: CurrentCompanyId !== companyId,
 		};
 
 		return [...acc, aircraftConfig];
@@ -73,18 +73,13 @@ export async function getFleet() {
  * Gets the jobs and sets the data in a way that I will use
  * @returns {object}
  */
-export async function getJobData() {
+export async function getJobData(tokens) {
 	try {
 		// Get the jobs form the OnAir api
-		const { Content } = await getJobs();
-		const { companyId } = await getApiTokens();
+		const { Content } = await getJobs(tokens);
 
 		// filter the jobs and organize to usable data structure
 		const jobs = Content.reduce((acc, job) => {
-			if (job.CompanyId !== companyId) {
-				return acc;
-			}
-
 			const legs = job.Cargos.reduce((cargoAcc, cargo) => {
 				const pax = job.Charters.find(
 					(pax) =>
@@ -112,6 +107,7 @@ export async function getJobData() {
 			const fullJob = {
 				id: job.Id,
 				legs,
+				companyId: job.CompanyId,
 				totalDistance: job.TotalDistance,
 				expires: job.ExpirationDate,
 				missionType: job.MissionType.Name,
@@ -139,13 +135,26 @@ export async function getJobData() {
 			return dateA - dateB;
 		});
 
-		const levelJobs = sortedJobs.filter((job) => job.expires === undefined);
-		const pendingJobs = sortedJobs.filter(
+		const companyJobs = sortedJobs.filter(
+			(job) => job.companyId === tokens.companyId
+		);
+
+		const levelJobs = companyJobs.filter(
+			(job) => job.expires === undefined
+		);
+		const pendingJobs = companyJobs.filter(
 			(job) => job.expires !== undefined
 		);
-		return [...pendingJobs, ...levelJobs];
+		const vaJobs = sortedJobs.filter(
+			(job) => job.companyId !== tokens.companyId
+		);
+
+		return {
+			vaJobs,
+			jobs: [...pendingJobs, ...levelJobs],
+		};
 	} catch (e) {
 		writeLog(JSON.stringify({ getJobData: e.message }));
-		return [];
+		return { jobs: [], vaJobs: [] };
 	}
 }
