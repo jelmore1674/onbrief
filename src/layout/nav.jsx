@@ -12,6 +12,7 @@ export function Nav() {
 	const navigate = useNavigate();
 	const { world } = useSelector((state) => state.world);
 	const { vaJobs } = useSelector((state) => state.jobs);
+	const { savedTokens, ...tokens } = useSelector((state) => state.tokens);
 	const dispatch = useDispatch();
 
 	const checkIfActiveRoute = (route) => {
@@ -47,7 +48,7 @@ export function Nav() {
 					<Navbar.Link
 						isActive={checkIfActiveRoute(routes.VA_JOBS)}
 						activeColor='success'
-						onPress={() => dispatch(fetchJobs())}
+						onPress={() => dispatch(fetchJobs(tokens[world]))}
 						as={NavLink}
 						to={routes.VA_JOBS}
 						variant='underline'>
@@ -57,7 +58,7 @@ export function Nav() {
 				<Navbar.Link
 					isActive={checkIfActiveRoute(routes.HOME)}
 					activeColor='primary'
-					onPress={() => dispatch(fetchJobs())}
+					onPress={() => dispatch(fetchJobs(tokens[world]))}
 					as={NavLink}
 					to='/'
 					variant='underline'>
