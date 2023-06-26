@@ -18,9 +18,7 @@ import { showToast } from './utils';
 
 export const Settings = () => {
 	const { world } = useSelector((state) => state.world);
-	let { apiKey, companyId, vaId, ...tokens } = useSelector(
-		(state) => state.tokens[world]
-	);
+	let { ...tokens } = useSelector((state) => state.tokens[world]);
 	const formTokens = useSelector((state) => state.tokens);
 
 	const [loading, setLoading] = useState(false);
@@ -93,7 +91,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='API Key'
-								initialValue={apiKey}
+								initialValue={tokens[world].apiKey}
 								onChange={(e) =>
 									dispatch(
 										updateToken({ apiKey: e.target.value })
@@ -106,7 +104,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='Company ID'
-								initialValue={companyId}
+								initialValue={tokens[world].companyId}
 								onChange={(e) =>
 									dispatch(
 										updateToken({
@@ -120,7 +118,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='VA-ID'
-								initialValue={vaId}
+								initialValue={tokens[world].vaId}
 								onChange={(e) =>
 									dispatch(
 										updateToken({ vaId: e.target.value })
