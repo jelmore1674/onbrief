@@ -15,10 +15,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateToken, updateWorldTokens } from '../../store/slices/tokens';
 import { updateToastMessage } from '../../store/slices/toast';
 import { showToast } from './utils';
+import { type } from '@tauri-apps/api/os';
 
 export const Settings = () => {
 	const { world } = useSelector((state) => state.world);
-	let { ...tokens } = useSelector((state) => state.tokens[world]);
+	let { apiKey, companyId, vaId, ...tokens } = useSelector(
+		(state) => state.tokens[world]
+	);
 	const formTokens = useSelector((state) => state.tokens);
 
 	const [loading, setLoading] = useState(false);
@@ -26,16 +29,29 @@ export const Settings = () => {
 	const dispatch = useDispatch();
 
 	const saveData = async (keys) => {
+		const os = await type();
 		let tries = 0;
+
 		setLoading(true);
 		try {
-			// await writeTextFile(
-			// 	`onbrief/${world}/apiData.dat`,
-			// 	btoa(JSON.stringify(keys)),
-			// 	{
-			// 		dir: BaseDirectory.Data,
-			// 	}
-			// );
+			if (os === 'Windows_NT') {
+				await writeTextFile(
+					`onbrief\\${world}\\apiData.dat`,
+					btoa(JSON.stringify(keys)),
+					{
+						dir: BaseDirectory.Data,
+					}
+				);
+			} else {
+				await writeTextFile(
+					`onbrief/${world}/apiData.dat`,
+					btoa(JSON.stringify(keys)),
+					{
+						dir: BaseDirectory.Data,
+					}
+				);
+			}
+
 			dispatch(updateWorldTokens(world));
 			showToast(
 				dispatch,
@@ -48,10 +64,17 @@ export const Settings = () => {
 
 			if (e?.includes('No such file or directory')) {
 				tries = tries++;
-				await createDir(`onbrief/${world}`, {
-					dir: BaseDirectory.Data,
-					recursive: true,
-				});
+				if (os === 'Windows_NT') {
+					await createDir(`onbrief\\${world}`, {
+						dir: BaseDirectory.Data,
+						recursive: true,
+					});
+				} else {
+					await createDir(`onbrief/${world}`, {
+						dir: BaseDirectory.Data,
+						recursive: true,
+					});
+				}
 				await saveData(keys);
 			}
 
@@ -91,7 +114,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='API Key'
-								initialValue={tokens[world].apiKey}
+								initialValue={apiKey}
 								onChange={(e) =>
 									dispatch(
 										updateToken({ apiKey: e.target.value })
@@ -104,7 +127,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='Company ID'
-								initialValue={tokens[world].companyId}
+								initialValue={companyId}
 								onChange={(e) =>
 									dispatch(
 										updateToken({
@@ -118,7 +141,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='VA-ID'
-								initialValue={tokens[world].vaId}
+								initialValue={vaId}
 								onChange={(e) =>
 									dispatch(
 										updateToken({ vaId: e.target.value })
