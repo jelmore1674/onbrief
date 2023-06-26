@@ -1,6 +1,7 @@
 import {
 	Button,
 	Container,
+	Grid,
 	Input,
 	Link,
 	Modal,
@@ -54,6 +55,8 @@ export const Leg = ({
 
 		setSelectOptions(options);
 	}, [fleet]);
+
+	console.log({ leg });
 
 	const handleChange = ({ value }) => {
 		const aircraft = fleet.find((aircraft) => aircraft.id === value);
@@ -114,6 +117,32 @@ export const Leg = ({
 					target='_blank'>
 					<img src='http://www.simbrief.com/previews/sblogo_small.png' />
 				</a>
+			</Row>
+			<Row css={{ marginBlock: 16 }} justify='flex-start'>
+				<Container>
+					<Row>
+						<Text b>Cargo</Text>
+					</Row>
+					<Row>
+						<Text>{leg?.cargo.toFixed(0).toLocaleString()}</Text>
+					</Row>
+				</Container>
+				<Container>
+					<Row>
+						<Text b>Pax</Text>
+					</Row>
+					<Row>
+						<Text>{leg?.pax}</Text>
+					</Row>
+				</Container>
+				<Container>
+					<Row>
+						<Text b>Distance</Text>
+					</Row>
+					<Row>
+						<Text>{leg?.distance.toLocaleString()}</Text>
+					</Row>
+				</Container>
 			</Row>
 		</Container>
 	);
