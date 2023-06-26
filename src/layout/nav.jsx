@@ -6,6 +6,7 @@ import routes from '../routes';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchJobs } from '../store/slices/jobs';
 import { updateWorld } from '../store/slices/world';
+import { fetchFleet } from '../store/slices/fleet';
 
 export function Nav() {
 	const currentRoute = useHref();
@@ -21,7 +22,8 @@ export function Nav() {
 
 	const handleWorldChange = (key) => {
 		dispatch(updateWorld(key));
-		// navigate('/');
+		dispatch(fetchJobs(tokens[key]));
+		dispatch(fetchFleet(tokens[key]));
 	};
 
 	return (

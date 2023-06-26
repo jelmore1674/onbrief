@@ -32,7 +32,7 @@ export const Fleet = () => {
 				justify='center'
 				alignItems='center'
 				css={{ marginBlock: 16 }}>
-				{!fleet.length && loading ? (
+				{!fleet.length || loading ? (
 					<Row justify='center' alignItems='center'>
 						<Loading
 							size='xl'

@@ -18,6 +18,7 @@ export const fetchFleet = createAsyncThunk(
 const initialState = {
 	fleet: [],
 	aircraftData: [],
+	world: '',
 	loading: false,
 	error: null,
 };
@@ -28,16 +29,19 @@ const fleetSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		// The `builder` callback form is used here because it provides correctly typed reducers from the action creators
-		builder.addCase(fetchFleet.fulfilled, (state, { payload }) => ({
+		builder.addCase(fetchFleet.fulfilled, (state, { payload, meta }) => ({
 			...state,
 			fleet: payload,
 			loading: false,
+			world: meta.arg?.world,
 		}));
-		builder.addCase(fetchFleet.pending, (state, action) => {
-			if (state.fleet.length) {
-				return state;
+		builder.addCase(fetchFleet.pending, (state, { meta }) => {
+			if (state.world === meta.arg?.world) {
+				return {
+					...state,
+					loading: false,
+				};
 			}
-
 			return {
 				...state,
 				loading: true,

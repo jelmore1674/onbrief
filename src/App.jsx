@@ -26,13 +26,6 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		if (!loading) {
-			dispatch(fetchJobs(tokens[world]));
-			dispatch(fetchFleet(tokens[world]));
-		}
-	}, [savedTokens, world]);
-
-	useEffect(() => {
 		const intervalId = setInterval(() => {
 			dispatch(fetchJobs(tokens[world]));
 			dispatch(fetchFleet(tokens[world]));
@@ -40,6 +33,7 @@ export default function App() {
 
 		return () => clearInterval(intervalId);
 	}, [world]);
+
 	return (
 		<Router>
 			<Layout>

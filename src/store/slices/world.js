@@ -8,10 +8,12 @@ export const worldSlice = createSlice({
 	name: 'world',
 	initialState,
 	reducers: {
-		updateWorld: (state, { payload }) => ({
-			...state,
-			world: payload,
-		}),
+		updateWorld: (state, { payload }) => {
+			return {
+				...state,
+				world: payload,
+			};
+		},
 	},
 });
 

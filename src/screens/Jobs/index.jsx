@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchJobs } from '../../store/slices/jobs';
 import {
 	Container,
 	Loading,
@@ -29,7 +28,6 @@ export const Jobs = () => {
 	const [newIcao, setNewIcao] = useState('');
 	const dispatch = useDispatch();
 	const [paginatedJobs, setPaginatedJobs] = useState(null);
-	const [worldChange, setWorldChange] = useState(false);
 
 	useEffect(() => {
 		if (path === routes.HOME) {
@@ -39,17 +37,7 @@ export const Jobs = () => {
 		if (path === routes.VA_JOBS) {
 			setPaginatedJobs(paginate(vaJobs, 10, page));
 		}
-
-		setWorldChange(false);
-	}, [jobs, vaJobs, page]);
-
-	useEffect(() => {
-		setWorldChange(true);
-		const newWorld = setTimeout(() => {
-			setWorldChange(false);
-		}, 2000);
-		return () => clearTimeout(newWorld);
-	}, [world]);
+	}, [jobs, vaJobs, page, path, world]);
 
 	const handlePagination = async (selectedPage) => {
 		setPaginatedJobs(null);
