@@ -31,13 +31,13 @@ export const Settings = () => {
 		let tries = 0;
 		setLoading(true);
 		try {
-			await writeTextFile(
-				`onbrief/${world}/apiData.dat`,
-				btoa(JSON.stringify(keys)),
-				{
-					dir: BaseDirectory.Data,
-				}
-			);
+			// await writeTextFile(
+			// 	`onbrief/${world}/apiData.dat`,
+			// 	btoa(JSON.stringify(keys)),
+			// 	{
+			// 		dir: BaseDirectory.Data,
+			// 	}
+			// );
 			dispatch(updateWorldTokens(world));
 			showToast(
 				dispatch,

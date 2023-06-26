@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+	apiKey: '',
+	companyId: '',
+	vaId: '',
 	cumulus: {
 		apiKey: '',
 		companyId: '',
