@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchJobs } from '../store/slices/jobs';
 import { updateWorld } from '../store/slices/world';
 import { fetchFleet } from '../store/slices/fleet';
+import { useEffect, useState } from 'react';
+import { getVersion } from '@tauri-apps/api/app';
 
 export function Nav() {
 	const currentRoute = useHref();
@@ -15,6 +17,13 @@ export function Nav() {
 	const { vaJobs } = useSelector((state) => state.jobs);
 	const { savedTokens, ...tokens } = useSelector((state) => state.tokens);
 	const dispatch = useDispatch();
+	const [currentVersion, setCurrentVersion] = useState('');
+
+	useEffect(() => {
+		getVersion().then((version) => {
+			setCurrentVersion(version);
+		});
+	}, []);
 
 	const checkIfActiveRoute = (route) => {
 		return route === currentRoute;
@@ -30,7 +39,10 @@ export function Nav() {
 		<Navbar isBordered variant={'sticky'}>
 			<Navbar.Content>
 				<Navbar.Brand as={NavLink} to='/'>
-					<Text>OnBrief</Text>
+					<Text>OnBrief </Text>
+					<Text css={{ marginLeft: 4 }} size={10} as='sup'>
+						{currentVersion}
+					</Text>
 				</Navbar.Brand>
 
 				<Dropdown>
