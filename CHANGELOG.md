@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Changed
+
+-   [Jobs/Legs] - changed dropdown to use NextUI.
+
 ## [0.0.7] 06-26-2023
 
 -   Initial Alpha Release

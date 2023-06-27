@@ -8,7 +8,7 @@ import {
 	Text,
 } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
-import { Leg } from '../../components/legs';
+import { Leg } from './components/legs';
 import { paginate } from './utils';
 import { FaCog } from 'react-icons/fa';
 import { IcaoModal } from '../../components/modal';

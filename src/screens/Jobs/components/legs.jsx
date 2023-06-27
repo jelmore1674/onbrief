@@ -1,29 +1,11 @@
-import {
-	Button,
-	Container,
-	Grid,
-	Input,
-	Link,
-	Modal,
-	Row,
-	Spacer,
-	Text,
-} from '@nextui-org/react';
+import { Container, Dropdown, Row, Text } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Select from 'react-select';
-import {
-	selectAircraft,
-	updateAircraftIcao,
-} from '../store/slices/aircraftData';
-import { IcaoModal } from './modal';
-import { openModal, closeModal } from '../store/slices/modal';
+import { selectAircraft } from '../../../store/slices/aircraftData';
+import { openModal } from '../../../store/slices/modal';
 
 export const Leg = ({
 	leg,
-	acdata,
-	icao,
-	setIcao,
 	selectedIcao,
 	setSelectedIcao,
 	newIcao,
@@ -36,14 +18,21 @@ export const Leg = ({
 	const [selectOptions, setSelectOptions] = useState([]);
 	const dispatch = useDispatch();
 
+	const [aircraft, setAircraft] = useState(null);
+
 	useEffect(() => {
 		const options = fleet.reduce((acc, aircraft) => {
 			const airport = aircraft.currentAirport
 				? aircraft.currentAirport
 				: 'In Air';
 			const option = {
+				maxCargo: aircraft.maximumCargoWeight,
+				economySeats: aircraft.economySeats,
+				businessClassSeats: aircraft.businessClassSeats,
+				firstClassSeats: aircraft.firstClassSeats,
+				registration: aircraft.registration,
 				value: aircraft.id,
-				label: `${aircraft.aircraftType} | ${airport}`,
+				label: aircraft.aircraftType,
 			};
 
 			if (leg.departureAirport === airport) {
@@ -56,13 +45,12 @@ export const Leg = ({
 		setSelectOptions(options);
 	}, [fleet]);
 
-	console.log({ leg });
-
 	const handleChange = ({ value }) => {
 		const aircraft = fleet.find((aircraft) => aircraft.id === value);
 		const foundIcao = Object.keys(aircraftIcao).find(
 			(plane) => plane === aircraft.aircraftType
 		);
+		setAircraft(aircraft.aircraftType);
 		if (!foundIcao) {
 			setNewIcao(aircraft.aircraftType);
 			if (newIcao !== '') {
@@ -86,23 +74,30 @@ export const Leg = ({
 	return (
 		<Container css={{ marginBottom: 16 }}>
 			<Row justify='space-between' align='center' css={{ width: '100%' }}>
-				<Select
-					styles={{
-						control: (baseStyles, state) => ({
-							...baseStyles,
-							minWidth: 300,
-							maxWidth: 300,
-							color: 'black',
-						}),
-						option: (baseStyles, state) => ({
-							...baseStyles,
-							color: 'black',
-						}),
-					}}
-					onChange={handleChange}
-					options={selectOptions}
-					noOptionsMessage={() => 'No aircraft at departure'}
-				/>
+				<Dropdown>
+					<Dropdown.Button
+						disabled={selectOptions.length === 0}
+						css={{ minWidth: 250 }}>
+						{aircraft ?? 'Select Aircraft'}
+					</Dropdown.Button>
+					<Dropdown.Menu
+						items={selectOptions}
+						onAction={(value) => handleChange({ value })}>
+						{(aircraft) => {
+							return (
+								<Dropdown.Item
+									key={aircraft.value}
+									description={`${aircraft.economySeats}/${
+										aircraft.businessClassSeats
+									}/${aircraft.firstClassSeats}   ${
+										aircraft.registration
+									}    ${aircraft.maxCargo.toLocaleString()} lbs`}>
+									{aircraft.label}
+								</Dropdown.Item>
+							);
+						}}
+					</Dropdown.Menu>
+				</Dropdown>
 
 				<Text b>{`${leg.departureAirport}-${leg.arrivalAirport}`}</Text>
 
