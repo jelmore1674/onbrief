@@ -19,9 +19,7 @@ import { type } from '@tauri-apps/api/os';
 
 export const Settings = () => {
 	const { world } = useSelector((state) => state.world);
-	let { apiKey, companyId, vaId, ...tokens } = useSelector(
-		(state) => state.tokens[world]
-	);
+	let tokens = useSelector((state) => state.tokens[world]);
 	const formTokens = useSelector((state) => state.tokens);
 
 	const [loading, setLoading] = useState(false);
@@ -62,7 +60,10 @@ export const Settings = () => {
 			// if the file doesn't exist try again.
 			console.error({ e });
 
-			if (e?.includes('No such file or directory')) {
+			if (
+				e?.includes('No such file or directory') ||
+				e?.includes('find the path specified')
+			) {
 				tries = tries++;
 				if (os === 'Windows_NT') {
 					await createDir(`onbrief\\${world}`, {
@@ -114,7 +115,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='API Key'
-								initialValue={apiKey}
+								initialValue={tokens?.apiKey ?? ''}
 								onChange={(e) =>
 									dispatch(
 										updateToken({ apiKey: e.target.value })
@@ -127,7 +128,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='Company ID'
-								initialValue={companyId}
+								initialValue={tokens?.companyId ?? ''}
 								onChange={(e) =>
 									dispatch(
 										updateToken({
@@ -141,7 +142,7 @@ export const Settings = () => {
 							<Input.Password
 								underlined
 								labelPlaceholder='VA-ID'
-								initialValue={vaId}
+								initialValue={tokens?.vaId ?? ''}
 								onChange={(e) =>
 									dispatch(
 										updateToken({ vaId: e.target.value })
