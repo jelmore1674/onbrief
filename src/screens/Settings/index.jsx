@@ -16,6 +16,8 @@ import { updateToken, updateWorldTokens } from '../../store/slices/tokens';
 import { updateToastMessage } from '../../store/slices/toast';
 import { showToast } from './utils';
 import { type } from '@tauri-apps/api/os';
+import { fetchJobs } from '../../store/slices/jobs';
+import { fetchFleet } from '../../store/slices/fleet';
 
 export const Settings = () => {
 	const { world } = useSelector((state) => state.world);
@@ -56,6 +58,8 @@ export const Settings = () => {
 				updateToastMessage,
 				'Successfully saved api keys'
 			);
+			dispatch(fetchFleet(tokens[world]));
+			dispatch(fetchJobs(tokens[world]));
 		} catch (e) {
 			// if the file doesn't exist try again.
 			console.error({ e });
