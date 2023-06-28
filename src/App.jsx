@@ -72,28 +72,6 @@ export default function App() {
 		return () => clearInterval(intervalId);
 	}, [world]);
 
-	// window.addEventListener('DOMContentLoaded', () => {
-	// 	// This will wait for the window to load, but you could
-	// 	// run this function on whatever trigger you want
-	// 	invoke('close_splashscreen');
-	// });
-
-	function handleSplashscreen() {
-		window.addEventListener('DOMContentLoaded', (event) => {
-			invoke('close_splashscreen');
-
-			console.log('DOM fully loaded and parsed');
-		});
-	}
-
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			handleSplashscreen();
-		}, 2000);
-
-		return () => clearTimeout(timeout);
-	}, []);
-
 	return (
 		<Router>
 			<Layout>
