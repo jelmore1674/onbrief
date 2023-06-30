@@ -18,12 +18,15 @@ import { showToast } from './utils';
 import { type } from '@tauri-apps/api/os';
 import { fetchJobs } from '../../store/slices/jobs';
 import { fetchFleet } from '../../store/slices/fleet';
+import { updateUsername } from '../../store/slices/simbrief';
+import { resetState } from '../../store';
 
 export const Settings = () => {
 	const { world } = useSelector((state) => state.world);
-	let tokens = useSelector((state) => state.tokens[world]);
+	const tokens = useSelector((state) => state.tokens[world]);
 	const formTokens = useSelector((state) => state.tokens);
-
+	const { username } = useSelector((state) => state.simbrief);
+	const [usernameForm, setUsernameForm] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [worldChange, setWorldChange] = useState(false);
 	const dispatch = useDispatch();
@@ -52,14 +55,15 @@ export const Settings = () => {
 				);
 			}
 
+			dispatch(updateUsername(usernameForm));
 			dispatch(updateWorldTokens(world));
+			await dispatch(fetchFleet(formTokens[world]));
+			await dispatch(fetchJobs(formTokens[world]));
 			showToast(
 				dispatch,
 				updateToastMessage,
 				'Successfully saved api keys'
 			);
-			dispatch(fetchFleet(tokens[world]));
-			dispatch(fetchJobs(tokens[world]));
 		} catch (e) {
 			// if the file doesn't exist try again.
 			console.error({ e });
@@ -98,6 +102,10 @@ export const Settings = () => {
 		}, 200);
 		return () => clearTimeout(newWorld);
 	}, [world]);
+
+	function resetApp() {
+		dispatch(resetState());
+	}
 
 	return (
 		<Container>
@@ -154,7 +162,18 @@ export const Settings = () => {
 								}
 							/>
 						</Grid>
-						<Grid xs={12}>
+						<Spacer y={3} />
+						<Grid>
+							<Input
+								underlined
+								labelPlaceholder='Simbrief Username'
+								initialValue={username}
+								onChange={(e) =>
+									setUsernameForm(e.target.value)
+								}
+							/>
+						</Grid>
+						<Grid xs={12} justify='space-between'>
 							{loading ? (
 								<Button disabled>
 									<Loading color='currentColor' />
@@ -168,6 +187,9 @@ export const Settings = () => {
 									Save
 								</Button>
 							)}
+							<Button color='error' onPress={resetApp}>
+								Reset App
+							</Button>
 						</Grid>
 					</Grid.Container>
 				</>
