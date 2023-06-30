@@ -38,7 +38,7 @@ export function Nav() {
 	return (
 		<Navbar isBordered variant={'sticky'}>
 			<Navbar.Content>
-				<Navbar.Brand as={NavLink} to='/'>
+				<Navbar.Brand as={NavLink} to={routes.HOME}>
 					<Text>OnBrief </Text>
 					<Text css={{ marginLeft: 4 }} size={10} as='sup'>
 						{currentVersion}
@@ -74,7 +74,7 @@ export function Nav() {
 					activeColor='primary'
 					onPress={() => dispatch(fetchJobs(tokens[world]))}
 					as={NavLink}
-					to='/'
+					to={routes.HOME}
 					variant='underline'>
 					Jobs
 				</Navbar.Link>
@@ -82,13 +82,21 @@ export function Nav() {
 					isActive={checkIfActiveRoute(routes.FLEET)}
 					activeColor='primary'
 					as={NavLink}
-					to='/fleet'
+					to={routes.FLEET}
 					variant='underline'>
 					Fleet
 				</Navbar.Link>
+				<Navbar.Link
+					isActive={checkIfActiveRoute(routes.DISPATCH)}
+					activeColor='primary'
+					as={NavLink}
+					to={routes.DISPATCH}
+					variant='underline'>
+					Dispatch
+				</Navbar.Link>
 			</Navbar.Content>
 			<Navbar.Content>
-				<Navbar.Item as={NavLink} to='/settings'>
+				<Navbar.Item as={NavLink} to={routes.SETTINGS}>
 					<FaCog
 						color={
 							checkIfActiveRoute(routes.SETTINGS)

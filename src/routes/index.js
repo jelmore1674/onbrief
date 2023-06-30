@@ -6,4 +6,5 @@ export default {
 	FLEET: '/fleet',
 	SETTINGS: '/settings',
 	VA_JOBS: '/va-jobs',
+	DISPATCH: '/dispatch',
 };
