@@ -38,7 +38,6 @@ jobs:
               with:
                   node-version: latest
                   cache: yarn
-                  cache-dependency-path: client/yarn.lock
                   # node-version-file: '.nvmrc'
 
             - name: Install Rust (Stable)
