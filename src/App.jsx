@@ -1,27 +1,27 @@
+import { relaunch } from '@tauri-apps/api/process';
+import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, MemoryRouter as Router, Routes } from 'react-router-dom';
+import { UpdateModal } from './components/UpdateModal';
 import { Layout } from './layout/layout';
 import routes from './routes';
 import { Fleet, Jobs, Settings } from './screens';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchJobs } from './store/slices/jobs';
+import { Dispatch } from './screens/Dispatch';
 import { fetchFleet } from './store/slices/fleet';
+import { fetchJobs } from './store/slices/jobs';
 import { createAllDirectories } from './utils/createDirectories';
-import * as tauriEvent from '@tauri-apps/api/event';
-import { relaunch } from '@tauri-apps/api/process';
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
-import { BaseDirectory, downloadDir } from '@tauri-apps/api/path';
-import { invoke } from '@tauri-apps/api';
-import { getApiTokens } from './lib/onair/utils';
-import { updateToken } from './store/slices/tokens';
 import { RUNNING_IN_TAURI } from './utils/updater';
-import { UpdateModal } from './components/UpdateModal';
+
+const ONE_HOUR = 3600000;
 
 export default function App() {
 	const { world } = useSelector((state) => state.world);
 	const { savedTokens, ...tokens } = useSelector((state) => state.tokens);
-	const { loading } = useSelector((state) => state.jobs);
 	const dispatch = useDispatch();
+	const minute = 1000 * 60;
+	const hour = minute * 60;
+	console.log(hour);
 
 	useEffect(() => {
 		createAllDirectories();
@@ -45,21 +45,21 @@ export default function App() {
 	// Tauri event listeners (run on mount)
 	if (RUNNING_IN_TAURI) {
 		useEffect(() => {
-			const thisMountID = Math.random();
-			mountID.current = thisMountID;
-			checkUpdate().then(({ shouldUpdate, manifest }) => {
-				if (shouldUpdate) {
-					const { version: newVersion, body } = manifest;
+			const checkForUpdate = setInterval(() => {
+				checkUpdate().then(({ shouldUpdate, manifest }) => {
+					if (shouldUpdate) {
+						const { version: newVersion, body } = manifest;
 
-					setModalContent({
-						header: newVersion,
-						body,
-					});
-					setShowModal(true);
-				}
-			});
+						setModalContent({
+							header: newVersion,
+							body,
+						});
+						setShowModal(true);
+					}
+				});
+			}, ONE_HOUR);
 
-			return () => (mountID.current = null);
+			return () => clearInterval(checkForUpdate);
 		}, []);
 	}
 
@@ -80,6 +80,7 @@ export default function App() {
 					<Route path={routes.HOME} element={<Jobs />} />
 					<Route path={routes.FLEET} element={<Fleet />} />
 					<Route path={routes.SETTINGS} element={<Settings />} />
+					<Route path={routes.DISPATCH} element={<Dispatch />} />
 				</Routes>
 				{modalContent && (
 					<UpdateModal
