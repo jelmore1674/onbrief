@@ -5,3 +5,4 @@ export { default as toastReducer } from './toast';
 export { default as aircraftDataReducer } from './aircraftData';
 export { default as modalReducer } from './modal';
 export { default as worldReducer } from './world';
+export { default as simbriefReducer } from './simbrief';
