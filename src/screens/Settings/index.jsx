@@ -57,8 +57,8 @@ export const Settings = () => {
 
 			dispatch(updateUsername(usernameForm));
 			dispatch(updateWorldTokens(world));
-			await dispatch(fetchFleet(formTokens[world]));
-			await dispatch(fetchJobs(formTokens[world]));
+			dispatch(fetchFleet(formTokens[world]));
+			dispatch(fetchJobs(formTokens[world]));
 			showToast(
 				dispatch,
 				updateToastMessage,
