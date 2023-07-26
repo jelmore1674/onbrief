@@ -1,5 +1,5 @@
 import { relaunch } from '@tauri-apps/api/process';
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
+  import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, MemoryRouter as Router, Routes } from 'react-router-dom';
@@ -19,9 +19,6 @@ export default function App() {
 	const { world } = useSelector((state) => state.world);
 	const { savedTokens, ...tokens } = useSelector((state) => state.tokens);
 	const dispatch = useDispatch();
-	const minute = 1000 * 60;
-	const hour = minute * 60;
-	console.log(hour);
 
 	useEffect(() => {
 		createAllDirectories();
@@ -29,9 +26,6 @@ export default function App() {
 		// 	dispatch(updateToken({ ...tokens, savedTokens: tokens }));
 		// });
 	}, []);
-
-	const mountID = useRef(null);
-	const unlistens = useRef({});
 
 	const [modalContent, setModalContent] = useState(null);
 	const [showModal, setShowModal] = useState(null);
@@ -64,12 +58,13 @@ export default function App() {
 	}
 
 	useEffect(() => {
-		const intervalId = setInterval(() => {
-			dispatch(fetchJobs(tokens[world]));
-			dispatch(fetchFleet(tokens[world]));
-		}, 10000);
-
-		return () => clearInterval(intervalId);
+		if (tokens[world].apiKey !== '') {
+			const intervalId = setInterval(() => {
+				dispatch(fetchJobs(tokens[world]));
+				dispatch(fetchFleet(tokens[world]));
+			}, 10000);
+			return () => clearInterval(intervalId);
+		}
 	}, [world]);
 
 	return (
