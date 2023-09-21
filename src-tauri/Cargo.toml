@@ -1,6 +1,6 @@
 [package]
 name = "onbrief"
-version = "0.0.9"
+version = "0.1.0"
 description = "Integrate Simbrief and OnAir Airline Manager"
 authors = ["you"]
 license = ""
@@ -13,7 +13,7 @@ edition = "2021"
 tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
-tauri = { version = "1.4", features = [ "updater", "api-all"] }
+tauri = { version = "1.4", features = ["updater", "api-all"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
@@ -24,8 +24,9 @@ custom-protocol = ["tauri/custom-protocol"]
 
 
 [profile.release]
-panic = "abort" # Strip expensive panic clean-up logic
+panic = "abort"   # Strip expensive panic clean-up logic
 codegen-units = 1 # Compile crates one after another so the compiler can optimize better
-lto = true # Enables link to optimizations
-opt-level = "s" # Optimize for binary size
+lto = true        # Enables link to optimizations
+opt-level = "s"   # Optimize for binary size
 # strip = true  # Automatically strip symbols from the binary.
+
